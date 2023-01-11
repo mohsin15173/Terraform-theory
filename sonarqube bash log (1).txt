@@ -1,0 +1,193 @@
+necd  
+  Create an Ec2 instance with size of t2.small  as sonarqube wants the minimum of 2 gb size and assign port in Inbond rules at security groups
+  connect to git bash to ec2 and follow the commands
+
+  hp@LAPTOP-BFFMA0UE MINGW64 ~
+  cd$ cd downloads
+
+  hp@LAPTOP-BFFMA0UE MINGW64 ~/downloads
+  $ ssh -i "ansible_ohio.pem" ubuntu@ec2-3-133-98-210.us-east-2.compute.amazonaws.com
+  The authenticity of host 'ec2-3-133-98-210.us-east-2.compute.amazonaws.com (3.133.98.210)' can't be established.
+  ED25519 key fingerprint is SHA256:pEMffmFazh3aI+1PkQsxg7swDZyTejveoFWHHRN85y0.
+  This key is not known by any other names
+  Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+  Warning: Permanently added 'ec2-3-133-98-210.us-east-2.compute.amazonaws.com' (ED25519) to the list of known hosts.
+  Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.11.0-1022-aws x86_64)
+
+
+ 1 ubuntu@ip-172-31-21-100:~$ sudo su -
+ 2 root@ip-172-31-21-100:~# java -version
+
+   Command 'java' not found, but can be installed with:
+
+    apt install openjdk-11-jre-headless  # version 11.0.11+9-0ubuntu2~20.04, or
+    apt install default-jre              #     version 2:1.11-72
+    apt install openjdk-16-jre-headless  # version 16.0.1+9-1~20.04
+    apt install openjdk-8-jre-headless   # version 8u292-b10-0ubuntu1~20.04
+    apt install openjdk-13-jre-headless  # version 13.0.7+5-0ubuntu1~20.04
+    apt install openjdk-17-jre-headless  # version 17+35-1~20.04
+
+ 3 root@ip-172-31-21-100:~# apt install openjdk-11-jre-headless
+
+ 4 root@ip-172-31-21-100:~# java -version
+   openjdk version "11.0.13" 2021-10-19
+
+ 5 root@ip-172-31-21-100:~# apt install -y unzip
+
+ 6 root@ip-172-31-21-100:~# netstat -ntlp
+   Command 'netstat' not found, but can be installed with:
+   apt install net-tools
+
+ 7 root@ip-172-31-21-100:~# apt install net-tools
+
+ 8 root@ip-172-31-21-100:~# netstat -ntlp
+    Active Internet connections (only servers)
+
+ 9 root@ip-172-31-21-100:~# wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.4.0.54424.zip
+                               
+ 10 root@ip-172-31-21-100:~# ls -la
+    total 256052
+   drwx------  4 root root      4096 Feb  1 11:06 .
+   drwxr-xr-x 19 root root      4096 Feb  1 10:55 ..
+   -rw-r--r--  1 root root      3106 Dec  5  2019 .bashrc
+   -rw-r--r--  1 root root       161 Dec  5  2019 .profile
+   drwx------  2 root root      4096 Feb  1 10:55 .ssh
+  -rw-r--r--  1 root root       221 Feb  1 11:06 .wget-hsts
+  -rw-r--r--  1 root root     52142 Jan 31 14:39 index.html
+  -rw-r--r--  1 root root     52142 Jan 31 14:39 index.html.1
+  drwxr-xr-x  4 root root      4096 Feb  1 10:55 snap
+  -rw-r--r--  1 root root 262060020 Dec 20 17:26 sonarqube-9.4.0.54424.zip
+
+ 11 root@ip-172-31-21-100:~# mv sonarqube-9.4.0.54424.zip /opt/
+
+ 12 root@ip-172-31-21-100:~# cd /opt/
+
+ 13 root@ip-172-31-21-100:/opt# ls -la
+   total 255928
+  drwxr-xr-x  2 root root      4096 Feb  1 11:07 .
+  drwxr-xr-x 19 root root      4096 Feb  1 10:55 ..
+  -rw-r--r--  1 root root 262060020 Dec 20 17:26 sonarqube-9.4.0.54424.zip
+
+ 14 root@ip-172-31-21-100:/opt# unzip sonarqube-9.4.0.54424.zip
+
+ 15 root@ip-172-31-21-100:/opt# ls -la
+   total 255932
+   drwxr-xr-x  3 root root      4096 Feb  1 11:09 .
+   drwxr-xr-x 19 root root      4096 Feb  1 10:55 ..
+   drwxr-xr-x 11 root root      4096 Dec 20 15:31 sonarqube-9.4.0.54424
+   -rw-r--r--  1 root root 262060020 Dec 20 17:26 sonarqube-9.4.0.54424.zip
+
+16 root@ip-172-31-21-100:/opt# adduser sonaradmin
+   Adding user `sonaradmin' ...
+   Adding new group `sonaradmin' (1001) ...
+   Adding new user `sonaradmin' (1001) with group `sonaradmin' ...
+   Creating home directory `/home/sonaradmin' ...
+   Copying files from `/etc/skel' ...
+   New password:( enter password)
+   Retype new password:
+   passwd: password updated successfully
+   Changing the user information for sonaradmin
+   (Enter the new value, or press ENTER for the default)
+        Full Name []:
+        Room Number []:
+        Work Phone []:
+        Home Phone []:
+        Other []:
+   Is the information correct? [Y/n]
+
+17 root@ip-172-31-21-100:/opt# ls -la
+    total 255932
+    drwxr-xr-x  3 root root      4096 Feb  1 11:09 .
+    drwxr-xr-x 19 root root      4096 Feb  1 10:55 ..
+    drwxr-xr-x 11 root root      4096 Dec 20 15:31 sonarqube-9.4.0.54424
+    -rw-r--r--  1 root root 262060020 Dec 20 17:26 sonarqube-9.4.0.54424.zip
+
+ 18 root@ip-172-31-21-100:/opt# chown -R sonaradmin:sonaradmin sonarqube-9.4.0.54424
+
+ 19 root@ip-172-31-21-100:/opt# cd sonarqube-9.4.0.54424/
+
+ 20 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424# ls -la
+     total 92
+    drwxr-xr-x 11 sonaradmin sonaradmin  4096 Dec 20 15:31 .
+    drwxr-xr-x  3 root       root        4096 Feb  1 11:09 ..
+    - rw-r--r--  1 sonaradmin sonaradmin  7651 Dec 20 15:12 COPYING
+    drwxr-xr-x  6 sonaradmin sonaradmin  4096 Dec 20 15:12 bin
+    drwxr-xr-x  2 sonaradmin sonaradmin  4096 Dec 20 15:12 conf
+    drwxr-xr-x  2 sonaradmin sonaradmin  4096 Dec 20 15:12 data
+    -rw-r--r--  1 sonaradmin sonaradmin 40615 Dec 20 15:15 dependency-license.json
+    drwxr-xr-x  7 sonaradmin sonaradmin  4096 Dec 20 15:31 elasticsearch
+    drwxr-xr-x  4 sonaradmin sonaradmin  4096 Dec 20 15:12 extensions
+    drwxr-xr-x  6 sonaradmin sonaradmin  4096 Dec 20 15:31 lib
+    drwxr-xr-x  2 sonaradmin sonaradmin  4096 Dec 20 15:12 logs
+    drwxr-xr-x  2 sonaradmin sonaradmin  4096 Dec 20 15:12 temp
+    drwxr-xr-x  6 sonaradmin sonaradmin  4096 Dec 20 15:31 web
+
+ 21 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424# cd bin/
+
+ 22 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin# ls -la
+    total 24
+    drwxr-xr-x  6 sonaradmin sonaradmin 4096 Dec 20 15:12 .
+    drwxr-xr-x 11 sonaradmin sonaradmin 4096 Dec 20 15:31 ..
+    drwxr-xr-x  2 sonaradmin sonaradmin 4096 Dec 20 15:12 jsw-license
+    drwxr-xr-x  3 sonaradmin sonaradmin 4096 Dec 20 15:12 linux-x86-64
+    drwxr-xr-x  3 sonaradmin sonaradmin 4096 Dec 20 15:12 macosx-universal-64
+    drwxr-xr-x  3 sonaradmin sonaradmin 4096 Dec 20 15:12 windows-x86-64
+
+ 23 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin# cd linux-x86-64/
+
+ 24 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64# ls -la
+    total 144
+    drwxr-xr-x 3 sonaradmin sonaradmin   4096 Dec 20 15:12 .
+    drwxr-xr-x 6 sonaradmin sonaradmin   4096 Dec 20 15:12 ..
+    drwxr-xr-x 2 sonaradmin sonaradmin   4096 Dec 20 15:12 lib
+    -rwxr-xr-x 1 sonaradmin sonaradmin  16393 Dec 20 15:12 sonar.sh
+    -rwxr-xr-x 1 sonaradmin sonaradmin 111027 Dec 20 15:12 wrapper
+  
+ 25 root@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64# su sonaradmin
+
+ 26 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ ls -la
+    total 144
+    drwxr-xr-x 3 sonaradmin sonaradmin   4096 Dec 20 15:12 .
+    drwxr-xr-x 6 sonaradmin sonaradmin   4096 Dec 20 15:12 ..
+    drwxr-xr-x 2 sonaradmin sonaradmin   4096 Dec 20 15:12 lib
+    -rwxr-xr-x 1 sonaradmin sonaradmin  16393 Dec 20 15:12 sonar.sh
+    -rwxr-xr-x 1 sonaradmin sonaradmin 111027 Dec 20 15:12 wrapper
+
+ 27 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ ./sonar.sh
+    Usage: ./sonar.sh { console | start | stop | force-stop | restart | status | dump }
+
+
+ 28 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ ls -la
+    total 144
+    drwxr-xr-x 3 sonaradmin sonaradmin   4096 Dec 20 15:12 .
+    drwxr-xr-x 6 sonaradmin sonaradmin   4096 Dec 20 15:12 ..
+    drwxr-xr-x 2 sonaradmin sonaradmin   4096 Dec 20 15:12 lib
+    -rwxr-xr-x 1 sonaradmin sonaradmin  16393 Dec 20 15:12 sonar.sh
+    -rwxr-xr-x 1 sonaradmin sonaradmin 111027 Dec 20 15:12 wrapper
+
+ 29 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ ./sonar.sh start
+    Starting SonarQube...
+    Started SonarQube.
+
+ 30 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ ./sonar.sh status
+    SonarQube is running (3954).
+
+ 31 sonaradmin@ip-172-31-21-100:/opt/sonarqube-9.4.0.54424/bin/linux-x86-64$ netstat -ntlp
+     (Not all processes could be identified, non-owned process info
+      will not be shown, you would have to be root to see it all.)
+     Active Internet connections (only servers)
+     Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+     tcp        0      0 127.0.0.1:32000         0.0.0.0:*               LISTEN      3956/java
+     tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -
+     tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+     tcp6       0      0 127.0.0.1:9092          :::*                    LISTEN      4050/java
+     tcp6       0      0 127.0.0.1:34021         :::*                    LISTEN      3978/java
+     tcp6       0      0 :::9000                 :::*                    LISTEN      4050/java
+     tcp6       0      0 127.0.0.1:9001          :::*                    LISTEN      3978/java
+     tcp6       0      0 :::22                   :::*                    LISTEN      -
+
+
+$
+
+hp@LAPTOP-BFFMA0UE MINGW64 ~/downloads
+$ cd downloads
